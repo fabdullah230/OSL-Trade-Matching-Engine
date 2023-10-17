@@ -7,6 +7,7 @@ import com.fardu.osl_trade_matching_engine.persistence.TradeService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,11 +27,12 @@ public class OrderBookApi {
     @PostMapping("/new_order")
     public ResponseEntity<String> placeNewOrder(@RequestBody Order order){
         try{
-            //todo: implement order validation in manager
             orderBookManager.sortIncomingOrders(order);
             return new ResponseEntity<>("Order successfully sent to order matching engine.", HttpStatusCode.valueOf(200));
+        } catch (HttpMessageNotReadableException e){
+            return new ResponseEntity<>("Order could not be processed, check if request has extra/missing fields.", HttpStatusCode.valueOf(500));
         } catch (Exception e){
-            return new ResponseEntity<>("Error sending order to order matching engine.", HttpStatusCode.valueOf(500));
+            return new ResponseEntity<>("Internal server error occurred", HttpStatusCode.valueOf(500));
         }
     }
 

@@ -17,8 +17,8 @@ public class TradeService {
         this.tradeRepository = tradeRepository;
     }
 
-    public Trade saveTrade(Trade trade) {
-        return tradeRepository.save(trade);
+    public void saveTrade(Trade trade) {
+        tradeRepository.save(trade);
     }
 
     public void createAndSaveTrade(String instrument, int quantity, double price){
@@ -27,7 +27,7 @@ public class TradeService {
     }
 
     public List<Trade> findTradesByInstrument(String instrument) {
-        return tradeRepository.findByInstrumentOrderByTimestampDesc(instrument);
+        return tradeRepository.findByInstrument(instrument);
     }
 
 }
