@@ -4,7 +4,7 @@ This is a Java Spring implementation of the Matching Engine question described i
 
 **Running the code:**   
 For simplicity, it is best to clone the repo, build the project and run the application using IntelliJ IDEA.
-Run the `OslTradeMatchingEngineApplication`class to start the application.
+Run the `OslTradeMatchingEngineApplication`class to start the application. The application will start running on port 8080.
 
 **Requirements:**    
 Zookeeper running on localhost:2181    
