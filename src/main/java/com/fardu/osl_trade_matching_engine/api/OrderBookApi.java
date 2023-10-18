@@ -10,10 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.TreeMap;
+import java.util.*;
 
 @RestController
 @AllArgsConstructor
@@ -25,12 +22,21 @@ public class OrderBookApi {
     private final TradeService tradeService;
 
     @PostMapping("/new_order")
-    public ResponseEntity<String> placeNewOrder(@RequestBody Order order){
+    public ResponseEntity<String> placeNewOrder(@RequestParam String instrument, @RequestParam String type, @RequestParam double price, @RequestParam int quantity){
         try{
-            orderBookManager.sortIncomingOrders(order);
-            return new ResponseEntity<>("Order successfully sent to order matching engine.", HttpStatusCode.valueOf(200));
-        } catch (HttpMessageNotReadableException e){
-            return new ResponseEntity<>("Order could not be processed, check if request has extra/missing fields.", HttpStatusCode.valueOf(500));
+            if (instrument.equals("BTC") || instrument.equals("ETH") || instrument.equals("USDT")){
+                if (type.equals("BUY") || type.equals("SELL")){
+                    Order order = new Order(UUID.randomUUID().toString(), System.currentTimeMillis(), type, instrument, price, quantity);
+                    orderBookManager.sortIncomingOrders(order);
+                    return new ResponseEntity<>("Order successfully sent to order matching engine.", HttpStatusCode.valueOf(200));
+                }
+                else {
+                    return new ResponseEntity<>("Order could not be processed, check the 'type' field (BUY/SELL).", HttpStatusCode.valueOf(500));
+                }
+            }
+            else {
+                return new ResponseEntity<>("Order could not be processed, check the 'instrument' field (BTC/ETH/USDT).", HttpStatusCode.valueOf(500));
+            }
         } catch (Exception e){
             return new ResponseEntity<>("Internal server error occurred", HttpStatusCode.valueOf(500));
         }

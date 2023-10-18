@@ -1,13 +1,16 @@
 package com.fardu.osl_trade_matching_engine.models;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class Order implements Comparable<Order> {
     private String id;
+    private long timestamp;
     private String type;
     private String instrument;
     private double price;
