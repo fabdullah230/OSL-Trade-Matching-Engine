@@ -8,13 +8,13 @@ public class OrderBook {
     private final TreeMap<Double, Queue<Order>> buyOrders = new TreeMap<>(Collections.reverseOrder());
 
     public void addOrder(Order order) {
-        TreeMap<Double, Queue<Order>> bookSide = order.getType().equals("BUY") ? buyOrders : sellOrders;
+        TreeMap<Double, Queue<Order>> bookSide = order.getSide().equals("BUY") ? buyOrders : sellOrders;
         bookSide.putIfAbsent(order.getPrice(), new PriorityQueue<>());
         bookSide.get(order.getPrice()).add(order);
     }
 
     public Optional<Order> matchOrder(Order newOrder) {
-        TreeMap<Double, Queue<Order>> opposingBookSide = newOrder.getType().equals("BUY") ? sellOrders : buyOrders;
+        TreeMap<Double, Queue<Order>> opposingBookSide = newOrder.getSide().equals("BUY") ? sellOrders : buyOrders;
 
         // Find the best available price for the new order
         Map.Entry<Double, Queue<Order>> bestPriceOrders = opposingBookSide.firstEntry();
@@ -25,8 +25,8 @@ public class OrderBook {
         }
 
         // Check if the new order can be matched with an order at the best available price
-        if ((newOrder.getType().equals("BUY") && newOrder.getPrice() >= bestPriceOrders.getKey()) ||
-                (newOrder.getType().equals("SELL") && newOrder.getPrice() <= bestPriceOrders.getKey())) {
+        if ((newOrder.getSide().equals("BUY") && newOrder.getPrice() >= bestPriceOrders.getKey()) ||
+                (newOrder.getSide().equals("SELL") && newOrder.getPrice() <= bestPriceOrders.getKey())) {
 
             Order matchedOrder = bestPriceOrders.getValue().poll();
 

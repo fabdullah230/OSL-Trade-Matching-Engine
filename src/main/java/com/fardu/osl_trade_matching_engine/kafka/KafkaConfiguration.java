@@ -21,8 +21,6 @@ import java.util.Map;
 @Configuration
 public class KafkaConfiguration {
 
-    private String bootstrapServers;
-
     @Bean
     public ConsumerFactory<String, Order> consumerFactory() {
         Map<String, Object> config = new HashMap<>();

@@ -39,7 +39,7 @@ public class Test {
 
                 Order order = new Order();
                 order.setId(id);
-                order.setType(type);
+                order.setSide(type);
                 order.setInstrument(instrument);
                 order.setPrice(price);
                 order.setQuantity(quantity);

@@ -14,19 +14,19 @@ import java.util.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api")
-public class OrderBookApi {
+public class OrderMatchingEngineApi {
 
     private final OrderBookManager orderBookManager;
     private final TradeService tradeService;
 
     @PostMapping("/new_order")
-    public ResponseEntity<String> placeNewOrder(@RequestParam String instrument, @RequestParam String type, @RequestParam double price, @RequestParam int quantity){
+    public ResponseEntity<Object> placeNewOrder(@RequestParam String instrument, @RequestParam String side, @RequestParam double price, @RequestParam int quantity){
         try{
             if (instrument.equals("BTC") || instrument.equals("ETH") || instrument.equals("USDT")){
-                if (type.equals("BUY") || type.equals("SELL")){
-                    Order order = new Order(UUID.randomUUID().toString(), System.currentTimeMillis(), type, instrument, price, quantity);
+                if (side.equals("BUY") || side.equals("SELL")){
+                    Order order = new Order(UUID.randomUUID().toString(), System.currentTimeMillis(), side, instrument, price, quantity);
                     orderBookManager.sortIncomingOrders(order);
-                    return new ResponseEntity<>("Order successfully sent to order matching engine.", HttpStatusCode.valueOf(200));
+                    return new ResponseEntity<>(order, HttpStatusCode.valueOf(200));
                 } else {
                     return new ResponseEntity<>("Order could not be processed, check the 'type' field (BUY/SELL).", HttpStatusCode.valueOf(500));
                 }
@@ -39,25 +39,25 @@ public class OrderBookApi {
     }
 
     @GetMapping("/retrieve_orderbook")
-    public ResponseEntity<Object> retrieveCurrentOrderbook(@RequestParam String symbol){
+    public ResponseEntity<Object> retrieveCurrentOrderbook(@RequestParam String instrument){
         Map<String, TreeMap<Double, Queue<Order>>> response;
         try{
-            if (symbol.equals("USDT") || symbol.equals("BTC") || symbol.equals("ETH")){
-                response = orderBookManager.fullOrderBookSnapshot(symbol);
+            if (instrument.equals("USDT") || instrument.equals("BTC") || instrument.equals("ETH")){
+                response = orderBookManager.fullOrderBookSnapshot(instrument);
                 return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
             } else {
-                return new ResponseEntity<>("Error retrieving full orderbook snapshot for " + symbol + ", invalid symbol", HttpStatusCode.valueOf(500));
+                return new ResponseEntity<>("Error retrieving full orderbook snapshot for " + instrument + ", invalid symbol", HttpStatusCode.valueOf(500));
             }
         } catch (Exception e){
-            return new ResponseEntity<>("Error retrieving full orderbook snapshot for " + symbol + ", internal error occurred", HttpStatusCode.valueOf(500));
+            return new ResponseEntity<>("Error retrieving full orderbook snapshot for " + instrument + ", internal error occurred", HttpStatusCode.valueOf(500));
         }
     }
 
     @DeleteMapping("/cancel_existing_order")
-    public ResponseEntity<String> cancelExistingOrder(@RequestParam String side, @RequestParam String id, @RequestParam String symbol){
+    public ResponseEntity<String> cancelExistingOrder(@RequestParam String side, @RequestParam String id, @RequestParam String instrument){
         try{
-            if ((side.equals("BUY") || side.equals("SELL")) && (symbol.equals("BTC") || symbol.equals("ETH") || symbol.equals("USDT"))){
-                String response =  orderBookManager.cancelExistingOrder(symbol, side, id);
+            if ((side.equals("BUY") || side.equals("SELL")) && (instrument.equals("BTC") || instrument.equals("ETH") || instrument.equals("USDT"))){
+                String response =  orderBookManager.cancelExistingOrder(instrument, side, id);
                 return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
             } else{
                 return new ResponseEntity<>("Invalid parameters passed in the request", HttpStatusCode.valueOf(200));
@@ -68,10 +68,10 @@ public class OrderBookApi {
     }
 
     @GetMapping("/get_executed_trades")
-    public ResponseEntity<Object> retrieveExecutedTrades(@RequestParam String symbol){
+    public ResponseEntity<Object> retrieveExecutedTrades(@RequestParam String instrument){
         try {
-            if (symbol.equals("BTC") || symbol.equals("ETH") || symbol.equals("USDT")) {
-                List<Trade> executedTrades = tradeService.findTradesByInstrument(symbol);
+            if (instrument.equals("BTC") || instrument.equals("ETH") || instrument.equals("USDT")) {
+                List<Trade> executedTrades = tradeService.findTradesByInstrument(instrument);
                 return new ResponseEntity<>(executedTrades, HttpStatusCode.valueOf(200));
             } else {
                 return new ResponseEntity<>("Invalid parameters passed in the request", HttpStatusCode.valueOf(200));

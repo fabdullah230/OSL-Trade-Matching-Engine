@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class Order implements Comparable<Order> {
     private String id;
     private long timestamp;
-    private String type;
+    private String side;
     private String instrument;
     private double price;
     private int quantity;

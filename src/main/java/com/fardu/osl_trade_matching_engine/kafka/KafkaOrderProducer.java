@@ -14,8 +14,8 @@ public class KafkaOrderProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendMessage(String message) {
+    public void sendMessage(String message, String topic) {
         System.out.println(message);
-        this.kafkaTemplate.send("trades", message);
+        this.kafkaTemplate.send(topic, message);
     }
 }
