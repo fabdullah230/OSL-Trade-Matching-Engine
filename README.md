@@ -39,5 +39,8 @@ The `OrderMatchingEngineApi` exposes the following REST endpoints.
    side: *String* ("BUY", "SELL")  
 
 
+**Control Flow Diagram**  
+Here is a high level diagram of the order matching process. The user can introduce orders to the system through the API or the Kafka input queue.
+![](https://github.com/fabdullah230/OSL-Trade-Matching-Engine/blob/main/OSL%20trade%20matching%20engine%20flow.png?raw=true)
 
 
