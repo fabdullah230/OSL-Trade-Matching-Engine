@@ -7,7 +7,6 @@ import com.fardu.osl_trade_matching_engine.persistence.TradeService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -16,7 +15,6 @@ import java.util.*;
 @AllArgsConstructor
 @RequestMapping("/api")
 public class OrderBookApi {
-
 
     private final OrderBookManager orderBookManager;
     private final TradeService tradeService;
@@ -29,12 +27,10 @@ public class OrderBookApi {
                     Order order = new Order(UUID.randomUUID().toString(), System.currentTimeMillis(), type, instrument, price, quantity);
                     orderBookManager.sortIncomingOrders(order);
                     return new ResponseEntity<>("Order successfully sent to order matching engine.", HttpStatusCode.valueOf(200));
-                }
-                else {
+                } else {
                     return new ResponseEntity<>("Order could not be processed, check the 'type' field (BUY/SELL).", HttpStatusCode.valueOf(500));
                 }
-            }
-            else {
+            } else {
                 return new ResponseEntity<>("Order could not be processed, check the 'instrument' field (BTC/ETH/USDT).", HttpStatusCode.valueOf(500));
             }
         } catch (Exception e){
@@ -44,9 +40,7 @@ public class OrderBookApi {
 
     @GetMapping("/retrieve_orderbook")
     public ResponseEntity<Object> retrieveCurrentOrderbook(@RequestParam String symbol){
-
         Map<String, TreeMap<Double, Queue<Order>>> response;
-
         try{
             if (symbol.equals("USDT") || symbol.equals("BTC") || symbol.equals("ETH")){
                 response = orderBookManager.fullOrderBookSnapshot(symbol);
@@ -57,18 +51,15 @@ public class OrderBookApi {
         } catch (Exception e){
             return new ResponseEntity<>("Error retrieving full orderbook snapshot for " + symbol + ", internal error occurred", HttpStatusCode.valueOf(500));
         }
-
     }
 
     @DeleteMapping("/cancel_existing_order")
     public ResponseEntity<String> cancelExistingOrder(@RequestParam String side, @RequestParam String id, @RequestParam String symbol){
-
         try{
             if ((side.equals("BUY") || side.equals("SELL")) && (symbol.equals("BTC") || symbol.equals("ETH") || symbol.equals("USDT"))){
                 String response =  orderBookManager.cancelExistingOrder(symbol, side, id);
                 return new ResponseEntity<>(response, HttpStatusCode.valueOf(200));
-            }
-            else{
+            } else{
                 return new ResponseEntity<>("Invalid parameters passed in the request", HttpStatusCode.valueOf(200));
             }
         } catch (Exception e){
