@@ -31,7 +31,7 @@ public class OrderMatchingEngine {
         } else {
             // Add the order to the order book
             orderBook.addOrder(order);
-            kafkaOrderProducer.sendMessage(order.getInstrument() + " trading:" + " Order added to book: " + order);
+            kafkaOrderProducer.sendMessage(order.getInstrument() + " trading: " + " Order added to book: " + order);
         }
     }
 
@@ -51,6 +51,6 @@ public class OrderMatchingEngine {
         }
 
         tradeService.createAndSaveTrade(order1.getInstrument(), tradeQuantity, order1.getPrice());
-        kafkaOrderProducer.sendMessage(order1.getInstrument() + " trading:" +"Trade executed: " + tradeQuantity + " @ " + order1.getPrice());
+        kafkaOrderProducer.sendMessage(order1.getInstrument() + " trading: " +"Trade executed: " + tradeQuantity + " @ " + order1.getPrice());
     }
 }
